@@ -210,5 +210,32 @@ def weather_api():
 def weather_demo():
     return render_template('weather.html')
 
+@app.route('/cache-stats')
+def cache_stats():
+    redis_info = redis_client.info()
+    
+    stats = {
+        'memory': {
+            'used': redis_info['used_memory_human'],
+            'peak': redis_info['used_memory_peak_human'],
+            'fragmentation': redis_info['mem_fragmentation_ratio']
+        },
+        'keys': {
+            'total': redis_info['db0']['keys'] if 'db0' in redis_info else 0,
+            'expires': redis_info['db0']['expires'] if 'db0' in redis_info else 0
+        },
+        'hit_rate': {
+            'hits': redis_info['keyspace_hits'],
+            'misses': redis_info['keyspace_misses'],
+            'rate': redis_info['keyspace_hits'] / (redis_info['keyspace_hits'] + redis_info['keyspace_misses']) 
+                     if (redis_info['keyspace_hits'] + redis_info['keyspace_misses']) > 0 else 0
+        },
+        'throughput': {
+            'ops_per_sec': redis_info['instantaneous_ops_per_sec']
+        }
+    }
+    
+    return render_template('cache_stats.html', stats=stats)
+
 if __name__ == '__main__':
     app.run(debug=True)
