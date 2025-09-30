@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fibonacci Caching Benchmark</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .highlight { background-color: #e6ffe6; }
+    </style>
+</head>
+<body>
+    <h1>Fibonacci Caching Benchmark</h1>
+    <table>
+        <tr>
+            <th>Parameter (n)</th>
+            <td>{{ results.n }}</td>
+        </tr>
+        <tr>
+            <th>Result (Fibonacci number)</th>
+            <td>{{ results.result }}</td>
+        </tr>
+        <tr>
+            <th>Uncached Time (seconds)</th>
+            <td>{{ "%.4f"|format(results.uncached_time) }}</td>
+        </tr>
+        <tr class="highlight">
+            <th>Cached Time (seconds)</th>
+            <td>{{ "%.4f"|format(results.cached_time) }}</td>
+        </tr>
+        <tr class="highlight">
+            <th>Speedup Factor</th>
+            <td>{% if results.speedup_factor == 'infinite' %}∞{% else %}{{ "%.2f"|format(results.speedup_factor) }}x{% endif %}</td>
+        </tr>
+    </table>
+    
+    <h2>Explanation</h2>
+    <p>
+        The uncached Fibonacci implementation recalculates each value multiple times, leading to exponential time complexity.
+        The cached version using <code>@lru_cache</code> stores results of previous calculations, dramatically improving performance.
+    </p>
+</body>
+</html>

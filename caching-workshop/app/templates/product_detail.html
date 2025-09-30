@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ product.name }} - Caching Demo</title>
+    <style>
+        .product-detail { border: 1px solid #ddd; padding: 20px; margin: 20px 0; }
+        .cache-info { background-color: #f9f9f9; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Product Detail</h1>
+    
+    <div class="cache-info">
+        <p>Query executed in <strong>{{ "%.4f"|format(query_time) }} seconds</strong></p>
+        <p>Cache is currently <strong>{{ "ENABLED" if use_cache else "DISABLED" }}</strong></p>
+        <p>
+            <a href="?cache=true">Enable Cache</a> | 
+            <a href="?cache=false">Disable Cache</a>
+        </p>
+    </div>
+    
+    <div class="product-detail">
+        <h2>{{ product.name }}</h2>
+        <p><strong>ID:</strong> {{ product.id }}</p>
+        <p><strong>Price:</strong> ${{ "%.2f"|format(product.price) }}</p>
+        <p><strong>Description:</strong> {{ product.description }}</p>
+        <p><strong>Added:</strong> {{ product.created_at }}</p>
+
+        <p><a href="/products/{{ product.id }}/edit">Edit Product</a></p>
+    </div>
+    
+    <p><a href="/products">Back to Products List</a></p>
+</body>
+</html>

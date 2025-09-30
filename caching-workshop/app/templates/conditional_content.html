@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Conditional Content - HTTP Caching Demo</title>
+</head>
+<body>
+    {{ content|safe }}
+    <p>Refresh the page to test caching. The server should respond with 304 Not Modified if the content hasn't changed.</p>
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>

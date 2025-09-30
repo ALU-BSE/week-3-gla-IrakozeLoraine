@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Caching Comparison</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .fastest { background-color: #e6ffe6; }
+    </style>
+</head>
+<body>
+    <h1>Caching Method Comparison</h1>
+    
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Time (seconds)</th>
+            <th>Notes</th>
+        </tr>
+        <tr class="{{ 'fastest' if redis_time == min([redis_time, memory_time, uncached_time]) }}">
+            <td>Redis Caching</td>
+            <td>{{ "%.4f"|format(redis_time) }}</td>
+            <td>Distributed, survives app restarts</td>
+        </tr>
+        <tr class="{{ 'fastest' if memory_time == min([redis_time, memory_time, uncached_time]) }}">
+            <td>In-Memory Caching</td>
+            <td>{{ "%.4f"|format(memory_time) }}</td>
+            <td>Simple but app-specific, doesn't scale</td>
+        </tr>
+        <tr class="{{ 'fastest' if uncached_time == min([redis_time, memory_time, uncached_time]) }}">
+            <td>No Caching</td>
+            <td>{{ "%.4f"|format(uncached_time) }}</td>
+            <td>Always fresh data but slow</td>
+        </tr>
+    </table>
+    
+    <p>Page: {{ page }}</p>
+    <p>
+        <a href="?page={{ page + 1 }}">Next Page</a>
+        {% if page > 1 %}
+            | <a href="?page={{ page - 1 }}">Previous Page</a>
+        {% endif %}
+    </p>
+    
+    <p><a href="/products">Back to Products</a></p>
+</body>
+</html>

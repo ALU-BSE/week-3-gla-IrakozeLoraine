@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Products - Caching Demo</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .pagination { margin: 20px 0; }
+        .cache-info { background-color: #f9f9f9; padding: 10px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Products List</h1>
+    
+    <div class="cache-info">
+        <p>Query executed in <strong>{{ "%.4f"|format(query_time) }} seconds</strong></p>
+        <p>Cache is currently <strong>{{ "ENABLED" if use_cache else "DISABLED" }}</strong></p>
+        <p>
+            <a href="?cache=true&page={{ pagination.page }}">Enable Cache</a> | 
+            <a href="?cache=false&page={{ pagination.page }}">Disable Cache</a>
+        </p>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
+                <td>${{ "%.2f"|format(product.price) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <div class="pagination">
+        {% if pagination.page > 1 %}
+            <a href="?page={{ pagination.page - 1 }}&cache={{ 'true' if use_cache else 'false' }}">Previous</a>
+        {% endif %}
+        
+        Page {{ pagination.page }} of {{ pagination.pages }}
+        
+        {% if pagination.page < pagination.pages %}
+            <a href="?page={{ pagination.page + 1 }}&cache={{ 'true' if use_cache else 'false' }}">Next</a>
+        {% endif %}
+    </div>
+
+    {% cache 60, "fragment-name" %}
+    <div>
+        This content will be cached for 60 seconds
+        Current time: {{ time.time() }}
+    </div>
+    {% endcache %}
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather Caching Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container { max-width: 800px; margin: 0 auto; }
+        .chart-container { position: relative; height: 300px; }
+        .controls { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather API Caching Demo</h1>
+        
+        <div class="controls">
+            <button onclick="fetchWeather(false)">Fetch Fresh Data</button>
+            <button onclick="fetchWeather(true)">Use Cached Data</button>
+        </div>
+        
+        <div class="chart-container">
+            <canvas id="weatherChart"></canvas>
+        </div>
+        
+        <div id="response"></div>
+    </div>
+    
+    <script>
+        const chartCtx = document.getElementById('weatherChart').getContext('2d');
+        const weatherChart = new Chart(chartCtx, {
+            type: 'line',
+            data: { labels: [], datasets: [
+                { label: 'Temperature', data: [], borderColor: 'red' },
+                { label: 'Response Time', data: [], borderColor: 'blue' }
+            ]},
+            options: { responsive: true, scales: { y: { beginAtZero: false } } }
+        });
+        
+        let requestCount = 0;
+        
+        function fetchWeather(useCache) {
+            const startTime = performance.now();
+            const url = `/api/weather?cached=${useCache}`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const responseTime = performance.now() - startTime;
+                    
+                    // Update chart
+                    requestCount++;
+                    weatherChart.data.labels.push(requestCount);
+                    weatherChart.data.datasets[0].data.push(data.temperature);
+                    weatherChart.data.datasets[1].data.push(responseTime);
+                    weatherChart.update();
+                    
+                    // Display response
+                    document.getElementById('response').innerHTML = `
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                        <p>Response time: ${responseTime.toFixed(2)}ms</p>
+                        <p>Source: ${data.source}</p>
+                    `;
+                });
+        }
+        
+        // Initial load
+        fetchWeather(true);
+    </script>
+</body>
+</html>
