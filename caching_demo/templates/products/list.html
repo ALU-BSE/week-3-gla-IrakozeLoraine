@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+</head>
+<body>
+    <h1>Product List</h1>
+    <p>Generated in {{ execution_time }} seconds</p>
+    
+    {% cache 300 product_table %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ product.name }}</td>
+                <td>${{ product.price }}</td>
+                <td>{{ product.description|truncatewords:10 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endcache %}
+    
+    <p><a href="?refresh=1">Force Refresh</a></p>
+</body>
+</html>

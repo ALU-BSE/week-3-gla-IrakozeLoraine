@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cache Statistics</title>
+    <style>
+        .stat-card { border: 1px solid #ddd; padding: 15px; margin: 10px; border-radius: 5px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .good { color: green; }
+        .warning { color: orange; }
+        .bad { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Cache Statistics</h1>
+    
+    <div class="stat-grid">
+        <div class="stat-card">
+            <h2>Memory Usage</h2>
+            <p>Used: {{ stats.memory.used }}</p>
+            <p>Peak: {{ stats.memory.peak }}</p>
+            <p>Fragmentation: 
+                <span class="{% if stats.memory.fragmentation < 1.1 %}good{% elif stats.memory.fragmentation < 1.5 %}warning{% else %}bad{% endif %}">
+                    {{ "%.2f"|format(stats.memory.fragmentation) }}
+                </span>
+            </p>
+        </div>
+        
+        <div class="stat-card">
+            <h2>Keys</h2>
+            <p>Total: {{ stats.keys.total }}</p>
+            <p>With TTL: {{ stats.keys.expires }}</p>
+        </div>
+        
+        <div class="stat-card">
+            <h2>Hit Rate</h2>
+            <p>Hits: {{ stats.hit_rate.hits }}</p>
+            <p>Misses: {{ stats.hit_rate.misses }}</p>
+            <p>Rate: 
+                <span class="{% if stats.hit_rate.rate > 0.8 %}good{% elif stats.hit_rate.rate > 0.5 %}warning{% else %}bad{% endif %}">
+                    {{ "%.2f%%"|format(stats.hit_rate.rate * 100) }}
+                </span>
+            </p>
+        </div>
+        
+        <div class="stat-card">
+            <h2>Throughput</h2>
+            <p>Operations/sec: {{ stats.throughput.ops_per_sec }}</p>
+        </div>
+    </div>
+    
+    <p><a href="/">Back to Home</a></p>
+    
+    <script>
+        // Auto-refresh every 5 seconds
+        setTimeout(() => { window.location.reload(); }, 5000);
+    </script>
+</body>
+</html>
